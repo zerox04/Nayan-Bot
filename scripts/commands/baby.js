@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 const baseApiUrl = async () => {
-  const base = await axios.get(`https://raw.githubusercontent.com/Blankid018/D1PT0/main/baseApiUrl.json`);
+  const base = await axios.get('https://raw.githubusercontent.com/Blankid018/D1PT0/main/baseApiUrl.json');
   return base.data.api;
 };
 
@@ -17,26 +17,35 @@ module.exports.config = {
 module.exports.handleReply = async function ({ api, event, handleReply }) {
   if (event.type === "message_reply") {
     const reply = event.body.toLowerCase();
-    try {
-      const link = `${await baseApiUrl()}/baby`;
-      const response = await axios.get(`${link}?text=${encodeURIComponent(reply)}`);
-      const ok = response.data.reply;
-      await api.sendMessage(ok, event.threadID, (error, info) => {
-        if (error) console.error("Error sending reply message:", error);
-        global.client.handleReply.push({
-          name: this.config.name,
-          type: "reply",
-          messageID: info.messageID,
-          author: event.senderID,
-          link: ok,
-        });
-      }, event.messageID);
-    } catch (error) {
-      console.error("Error fetching response from API:", error);
-      api.sendMessage(
-        "An error occurred while fetching response from API. Please try again later.",
-        event.threadID
-      );
+    console.log("Received reply:", reply); // Debug log
+
+    if (isNaN(reply)) {
+      try {
+        const link = `${await baseApiUrl()}/baby`;
+        const response = await axios.get(`${link}?text=${encodeURIComponent(reply)}`);
+        const ok = response.data.reply;
+        console.log("API response:", ok); // Debug log
+        
+        await api.sendMessage(ok, event.threadID, (error, info) => {
+          if (error) {
+            console.error("Error sending reply message:", error);
+          } else {
+            global.client.handleReply.push({
+              name: this.config.name,
+              type: "reply",
+              messageID: info.messageID,
+              author: event.senderID,
+              link: ok,
+            });
+          }
+        }, event.messageID);
+      } catch (error) {
+        console.error("Error fetching response from API:", error);
+        api.sendMessage(
+          "An error occurred while fetching response from API. Please try again later.",
+          event.threadID
+        );
+      }
     }
   }
 };
