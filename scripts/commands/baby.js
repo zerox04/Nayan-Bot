@@ -1,21 +1,44 @@
 const axios = require('axios');
 
 const baseApiUrl = async () => {
-    const base = await axios.get(`https://raw.githubusercontent.com/Blankid018/D1PT0/main/baseApiUrl.json`);
-    console.log(base.data.api);
-    return base.data.api;
+  const base = await axios.get(`https://raw.githubusercontent.com/Blankid018/D1PT0/main/baseApiUrl.json`);
+  return base.data.api;
 };
 
 module.exports.config = {
   name: "bby",
   version: "6.9.0",
   credits: "dipto",
-  countDown: 0,
-  hasPermission: 0,
-  description: "better than all sim simi",
-  category: "chat",
   prefix: false,
-  usages: `[anyMessage] OR\nteach [YourMessage] - [Reply1], [Reply2], [Reply3]... OR\nteach [react] [YourMessage] - [react1], [react2], [react3]... OR\nremove [YourMessage] OR\nrm [YourMessage] - [indexNumber] OR\nmsg [YourMessage] OR\nlist OR\nall OR\nedit [YourMessage] - [NewMessage]`,
+  category: "chat",
+  cooldowns: 0,
+};
+
+module.exports.handleReply = async function ({ api, event, handleReply }) {
+  if (event.type === "message_reply") {
+    const reply = event.body.toLowerCase();
+    try {
+      const link = `${await baseApiUrl()}/baby`;
+      const response = await axios.get(`${link}?text=${encodeURIComponent(reply)}`);
+      const ok = response.data.reply;
+      await api.sendMessage(ok, event.threadID, (error, info) => {
+        if (error) console.error("Error sending reply message:", error);
+        global.client.handleReply.push({
+          name: this.config.name,
+          type: "reply",
+          messageID: info.messageID,
+          author: event.senderID,
+          link: ok,
+        });
+      }, event.messageID);
+    } catch (error) {
+      console.error("Error fetching response from API:", error);
+      api.sendMessage(
+        "An error occurred while fetching response from API. Please try again later.",
+        event.threadID
+      );
+    }
+  }
 };
 
 module.exports.run = async function ({ api, event, args, Users }) {
@@ -25,9 +48,25 @@ module.exports.run = async function ({ api, event, args, Users }) {
     const uid = event.senderID;
 
     if (!args[0]) {
-      const ran = ["Ki, amar virtual reality e tomake peye khushi hoye gechi 😍", "Hea, amar chatbot brain tomake miss korche🥺", "bbu, amar battery fully charged tomar kotha shonar jonno 🥳", "Tumi daako, ami active mode e 😁","Ke, amar program shudhu tomar jonno ready? 🫠","Tomake dekhlei mon bhalo hoye jay 😌","Bolo, tomar jonno ami sob kichu 😶‍🌫️","Hea, amar chocolate? 🍫","Kireee, amar mishti doi? 🍧","Tumi daklei mon khushi hoye jay 😝","Ki, amake miss korcho?😒","Tumi daklei mon khushi hoye jay 😚","hea babu bolo 😊","bby, tumar jonno wait kortesilam 🥹"];
-      const r = ran[Math.floor(Math.random() * ran.length)];
-      return api.sendMessage(r, event.threadID, event.messageID);
+      const randomResponses = [
+        "Ki, amar virtual reality e tomake peye khushi hoye gechi 😍",
+        "Hea, amar chatbot brain tomake miss korche🥺",
+        "bbu, amar battery fully charged tomar kotha shonar jonno 🥳",
+        "Tumi daako, ami active mode e 😁",
+        "Ke, amar program shudhu tomar jonno ready? 🫠",
+        "Tomake dekhlei mon bhalo hoye jay 😌",
+        "Bolo, tomar jonno ami sob kichu 😶‍🌫️",
+        "Hea, amar chocolate? 🍫",
+        "Kireee, amar mishti doi? 🍧",
+        "Tumi daklei mon khushi hoye jay 😝",
+        "Ki, amake miss korcho?😒",
+        "Tumi daklei mon khushi hoye jay 😚",
+        "hea babu bolo 😊",
+        "bby, tumar jonno wait kortesilam 🥹"
+      ];
+      const randomIndex = Math.floor(Math.random() * randomResponses.length);
+      const randomMessage = randomResponses[randomIndex];
+      return api.sendMessage(randomMessage, event.threadID);
     }
 
     if (args[0] === 'remove') {
@@ -116,8 +155,8 @@ module.exports.run = async function ({ api, event, args, Users }) {
     const response = await axios.get(`${link}?text=${dipto}`);
     return api.sendMessage(response.data.reply, event.threadID, event.messageID);
 
-  } catch (e) {
-    console.error('Error in command execution:', e);
-    return api.sendMessage(`error: ${e.message}`, event.threadID, event.messageID);
+  } catch (error) {
+    console.error(`Failed to get an answer: ${error.message}`);
+    api.sendMessage(`${error.message}.\nAn error occurred. Please try again later.`, event.threadID, event.messageID);
   }
 };
