@@ -7,7 +7,7 @@ module.exports.config = {
   credits: "riyadxRubish",
   description: "better than all Sim simi",
   prefix: true,
-  commandCategory: "ChatBots",
+  category: "ChatBots",
   cooldowns: 5,
 };
 
