@@ -8,7 +8,7 @@ module.exports = {
     description: "auto video download",
     category: "user",
     usages: "",
-    cooldowns: 5,
+    cooldowns: 10,
 },
 start: async function({ nayan, events, args }) {},
 handleEvent: async function ({ api, event, args }) {
@@ -19,11 +19,11 @@ handleEvent: async function ({ api, event, args }) {
   const body = content.toLowerCase();
   const {alldown} = require("nayan-media-downloader")
   if (body.startsWith("https://")) {
-  api.setMessageReaction("🔍", event.messageID, (err) => {}, true);
+  api.setMessageReaction("📥", event.messageID, (err) => {}, true);
 const data = await alldown(content);
   console.log(data)
   const {low, high, title} = data.data;
-    api.setMessageReaction("✔️", event.messageID, (err) => {}, true);
+    api.setMessageReaction("☑️", event.messageID, (err) => {}, true);
   const video = (await axios.get(high, {
       responseType: "arraybuffer",
     })).data;
