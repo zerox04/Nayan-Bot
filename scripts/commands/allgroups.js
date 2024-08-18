@@ -1,5 +1,5 @@
 module.exports.config = {
-  name: "allgroups",
+  name: "allbox",
   version: "2.0.0",
   permission: 2,
   credits: "Nayan",
