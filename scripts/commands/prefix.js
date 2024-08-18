@@ -1,38 +1,63 @@
+const fs = require("fs");
+const axios = require("axios"); // Add axios for making HTTP requests
+
 module.exports.config = {
-  name: "prefix",
-  version: "1.0.0",
-  permission: 0,
-  credits: "ryuko",
-  prefix: true,
-  description: "guide",
-  category: "system",
-  usages: "",
-  cooldowns: 5,
+    name: "prefix",
+    version: "1.0.1",
+    hasPermssion: 0,
+    credits: "Riyadh",
+    description: "hihihihi",
+    category: "no prefix", // Changed from commandCategory to category
+    usages: "prefix",
+    prefix: true, // Changed from usePrefix to prefix
+    cooldowns: 1,
 };
 
-module.exports.handleEvent = async ({ event, api, Threads }) => {
-  var { threadID, messageID, body, senderID } = event;
-  function out(data) {
-    api.sendMessage(data, threadID, messageID)
-  }
-  var dataThread = (await Threads.getData(threadID));
-  var data = dataThread.data; 
-  const threadSetting = global.data.threadData.get(parseInt(threadID)) || {};
+module.exports.handleEvent = async function ({ api, event, client, __GLOBAL }) {
+    const { threadID, messageID, senderID, body } = event;
+    let senderName = "";
 
-  var arr = ["mpre","mprefix","prefix", "command mark", "What is the prefix of the bot?","PREFIX"];
-  arr.forEach(i => {
-    let str = i[0].toUpperCase() + i.slice(1);
-    if (body === i.toUpperCase() | body === i | str === body) {
-		const prefix = threadSetting.PREFIX || global.config.PREFIX;
-      if (config.PREFIX == null) {
-        return out(`bot prefix : ${global.config.PREFIX}`)
-      }
-      else return out(`bot prefix : ${global.config.PREFIX}`)
+    try {
+        const userInfo = await api.getUserInfo(senderID);
+        senderName = userInfo[senderID]?.name || "there";
+    } catch (err) {
+        console.error(err);
+        senderName = "there";
     }
 
-  });
+    if (
+        body.startsWith("prefix") ||
+        body.startsWith("Prefix") ||
+        body.startsWith("Robo") ||
+        body.startsWith("pref")
+    ) {
+        // URL of the image from Imgur or Imgbb
+        const imageUrl = "https://i.imgur.com/vvJPrBU.gif"; // Replace with your actual image URL
+
+        // Send text message with prefix information
+        api.sendMessage(
+            {
+                body: ` ✿ ${senderName}🌟, 𝖬𝗒 𝗉𝗋𝖾𝖿𝗂𝗑 𝗂𝗌 𝗂𝗇 𝗍𝗁𝖾 𝖦𝗂𝖿 ✿ `,
+                attachment: imageUrl,
+            },
+            threadID,
+            messageID
+        );
+
+        // Send voice message with additional information (if required, otherwise you can remove this)
+        const voiceFile = fs.readFileSync(__dirname + "/zone/pr.gif");
+        api.sendMessage(
+            {
+                attachment: voiceFile,
+                type: "audio",
+                body: "Hey, listen to my prefix information!",
+            },
+            threadID,
+            () => {}
+        );
+
+        api.setMessageReaction("🤖", messageID, (err) => {}, true);
+    }
 };
 
-module.exports.run = async({ event, api }) => {
-    return api.sendMessage("no prefix commands", event.threadID)
-}
+module.exports.run = function ({ api, event, client, __GLOBAL }) {};
