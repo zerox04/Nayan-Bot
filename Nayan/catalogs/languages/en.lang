@@ -26,7 +26,7 @@ users.needObject=have to be an Object
 
 handleCommand.userBanned=you are unable to use bot.
 handleCommand.threadBanned=your thread are unable to use bot.
-handleCommand.commandNotExist=🍭|𝗔𝗿𝗲 𝘆𝗼𝘂 𝗳𝗶𝗻𝗱𝗶𝗻𝗴『%1』𝗼𝗿 𝗻𝗼𝘁? ⚡\n 𝗧𝘆𝗽𝗲 -𝗵𝗲𝗹𝗽 𝘁𝗼 𝘀𝗲𝗲 𝗰𝗼𝗺𝗺𝗮𝗻𝗱𝘀 💫".
+handleCommand.commandNotExist=𝗔𝗿𝗲 𝘆𝗼𝘂 𝗳𝗶𝗻𝗱𝗶𝗻𝗴『%1』𝗼𝗿 𝗻𝗼𝘁? ⚡𝗧𝘆𝗽𝗲 -𝗵𝗲𝗹𝗽 𝘁𝗼 𝘀𝗲𝗲 𝗰𝗼𝗺𝗺𝗮𝗻𝗱𝘀 💫".
 handleCommand.commandThreadBanned=your thread is unable to use command "%1"
 handleCommand.commandUserBanned=you are unable to use command "%1"
 handleCommand.threadNotAllowNSFW=your thread is not allowed to use NSFW commands
