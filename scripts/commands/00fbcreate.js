@@ -10,9 +10,9 @@ module.exports = {
  credits: "Developer",
  description: "Create Facebook accounts using randomly generated email addresses.",
  usage: "{pn} fbcreate <amount>",
- usePrefix: true,
- commandCategory: "Utilities",
- cooldowns: 0,
+ prefix: true,
+ category: "Utilities",
+ cooldowns: 30,
  },
 
  async run({ api, event, args }) {
