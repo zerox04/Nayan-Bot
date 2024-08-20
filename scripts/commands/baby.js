@@ -26,7 +26,7 @@ module.exports.handleReply = async function ({ api, event, handleReply }) {
         const ok = response.data.reply;
         console.log("API response:", ok); // Debug log
         
-        await api.sendMessage(ok, event.threadID, (error, info) => {
+        api.sendMessage(ok, event.threadID, (error, info) => {
           if (error) {
             console.error("Error sending reply message:", error);
           } else {
@@ -35,7 +35,7 @@ module.exports.handleReply = async function ({ api, event, handleReply }) {
               type: "reply",
               messageID: info.messageID,
               author: event.senderID,
-              link: ok,
+              head: event.body
             });
           }
         }, event.messageID);
