@@ -16,8 +16,8 @@ module.exports = {
   handleReply: async function ({ api, event, handleReply }) {
     try {
       const response = await axios.get(`https://rubish-apihub.onrender.com/rubish/simma-chat?message=${encodeURIComponent(event.body)}&apikey=rubish69`);
-      console.log(response.data);
-      const result = response.data.message; // Adjust this based on the new API response structure
+      console.log('API Response:', response.data);
+      const result = response.data.response; // Extracted response from API
 
       api.sendMessage(result, event.threadID, (error, info) => {
         if (error) {
@@ -69,8 +69,8 @@ module.exports = {
       }
 
       const response = await axios.get(`https://rubish-apihub.onrender.com/rubish/simma-chat?message=${encodeURIComponent(msg)}&apikey=rubish69`);
-      console.log(response.data);
-      const replyMessage = response.data.message; // Adjust this based on the new API response structure
+      console.log('API Response:', response.data);
+      const replyMessage = response.data.response; // Extracted response from API
 
       nayan.sendMessage({ body: replyMessage }, events.threadID, (error, info) => {
         if (error) {
@@ -87,7 +87,7 @@ module.exports = {
       }, events.messageID);
 
     } catch (error) {
-      console.log(error);
+      console.error('Error in start function:', error);
       nayan.sendMessage('An error has occurred, please try again later.', events.threadID, events.messageID);
     }
   }
