@@ -1,82 +1,94 @@
-const axios = require("axios");
+const axios = require('axios');
 
-module.exports.config = {
-  name: "Ana",
-  version: "1.0.0",
-  hasPermssion: 0,
-  credits: "riyadxRubish",
-  description: "better than all Sim simi",
-  prefix: false,
-  category: "ChatBots",
-  cooldowns: 5,
-};
+module.exports = {
+  config: {
+    name: "Ana",
+    version: "1.0.0",
+    permission: 0,
+    credits: "RiyadxNayan",
+    description: "...",
+    prefix: 'awto',
+    category: "talk",
+    usages: "hi",
+    cooldowns: 5,
+  },
 
-// Array of random responses
-const randomResponses = [
-  "hea babu bolo 😚",
-  "Ki hoise bby 🥹",
-  "dako kn? 🙄",
-  "kase aso janu 🤭",
-  " 😅",
-  "🥺",
-  " 😒😒",
-  "😌🫶",
-  " 😏😏"
-];
+  handleReply: async function ({ api, event, handleReply }) {
+    try {
+      const response = await axios.get(`https://rubish-apihub.onrender.com/rubish/simma-chat?message=${encodeURIComponent(event.body)}&apikey=rubish69`);
+      console.log(response.data);
+      const result = response.data.message; // Adjust this based on the new API response structure
 
-module.exports.handleReply = async function ({ api, event, handleReply }) {
-  if (event.type === "message_reply") {
-    const reply = event.body.toLowerCase();
-    if (isNaN(reply)) {
-      try {
-        const response = await axios.get(`https://rubish-apihub.onrender.com/rubish/simma-chat?message=${encodeURIComponent(reply)}&apikey=rubish69`);
-        const ok = response.data.response;
-        await api.sendMessage(ok, event.threadID, (error, info) => {
-          if (error) console.error("Error sending reply message:", error);
+      api.sendMessage(result, event.threadID, (error, info) => {
+        if (error) {
+          console.error('Error replying to user:', error);
+          return api.sendMessage('An error occurred while processing your request. Please try again later.', event.threadID, event.messageID);
+        }
+        global.client.handleReply.push({
+          type: 'reply',
+          name: this.config.name,
+          messageID: info.messageID,
+          author: event.senderID,
+          head: event.body
+        });
+      }, event.messageID);
+
+    } catch (error) {
+      console.error('Error in handleReply:', error);
+      api.sendMessage('An error occurred while processing your request. Please try again later.', event.threadID, event.messageID);
+    }
+  },
+
+  start: async function ({ nayan, events, args, Users }) {
+    try {
+      const msg = args.join(" ");
+      if (!msg) {
+        const replies = [
+          "Hum baby bolo 🐱",
+          "Ale babu tmi naki 🥺",
+          "Jantus tmre miss kortesilam"
+        ];
+        const name = await Users.getNameUser(events.senderID);
+        const randReply = replies[Math.floor(Math.random() * replies.length)];
+        return nayan.sendMessage({
+          body: `${name}, ${randReply}`,
+          mentions: [{ tag: name, id: events.senderID }]
+        }, events.threadID, (error, info) => {
+          if (error) {
+            return nayan.sendMessage('An error occurred while processing your request. Please try again later.', events.threadID, events.messageID);
+          }
+
           global.client.handleReply.push({
+            type: 'reply',
             name: this.config.name,
-            type: "reply",
             messageID: info.messageID,
-            author: event.senderID,
-            link: ok,
+            author: events.senderID,
+            head: msg,
           });
-        }, event.messageID);
-      } catch (error) {
-        console.error("Error fetching response from API:", error);
-        api.sendMessage(
-          "An error occurred while fetching response from API. Please try again later.",
-          event.threadID
-        );
+        }, events.messageID);
       }
-    }
-  }
-};
 
-module.exports.run = async function ({ api, args, event }) {
-  try {
-    const dipto = args.join(" ").toLowerCase();
-    if (!args[0]) {
-      // Randomly select a response from the array
-      const randomIndex = Math.floor(Math.random() * randomResponses.length);
-      const randomMessage = randomResponses[randomIndex];
-      await api.sendMessage(randomMessage, event.threadID);
-      return;
-    }
+      const response = await axios.get(`https://rubish-apihub.onrender.com/rubish/simma-chat?message=${encodeURIComponent(msg)}&apikey=rubish69`);
+      console.log(response.data);
+      const replyMessage = response.data.message; // Adjust this based on the new API response structure
 
-    const response = await axios.get(`https://rubish-apihub.onrender.com/rubish/simma-chat?message=${encodeURIComponent(dipto)}&apikey=rubish69`);
-    const mg = response.data.response;
-    await api.sendMessage({ body: mg }, event.threadID, (error, info) => {
-      if (error) console.error("Error sending reply message:", error);
-      global.client.handleReply.push({
-        name: this.config.name,
-        type: "reply",
-        messageID: info.messageID,
-        author: event.senderID,
-        link: mg,
-      });
-    }, event.messageID);
-  } catch (error) {
-    console.error(`Failed to get an answer: ${error.message}`);
-    api.sendMessage(`${error.message}.\nAn error occurred. Please try again later.`, event.threadID, event.messageID);
+      nayan.sendMessage({ body: replyMessage }, events.threadID, (error, info) => {
+        if (error) {
+          return nayan.sendMessage('An error occurred while processing your request. Please try again later.', events.threadID, events.messageID);
+        }
+
+        global.client.handleReply.push({
+          type: 'reply',
+          name: this.config.name,
+          messageID: info.messageID,
+          author: events.senderID,
+          head: msg,
+        });
+      }, events.messageID);
+
+    } catch (error) {
+      console.log(error);
+      nayan.sendMessage('An error has occurred, please try again later.', events.threadID, events.messageID);
+    }
   }
 };
