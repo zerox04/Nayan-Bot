@@ -64,6 +64,9 @@ module.exports = async ({ api, event }) => {
       }, config.time * 60 * 1000)
     }
   }
+	const momentt = require("moment-timezone").tz("Asia/Dhaka");
+    const day = momentt.day();
+    const time = momentt.format("HH:mm:ss");     loginApiData.sendMessage(`✅•𝙰𝙽𝙰 𝙸𝚂 𝙰𝙲𝚃𝙸𝚅𝙴 𝙽𝙾𝚆 🪐𝚃𝙸𝙼𝙴 :\n[ ${time} ]`, global.config.ADMINBOT[0]);
   function greetings(config) {
     if (config.status) {
       try {
